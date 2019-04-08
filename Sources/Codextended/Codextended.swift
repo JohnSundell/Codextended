@@ -16,7 +16,10 @@ public protocol AnyEncoder {
 }
 
 extension JSONEncoder: AnyEncoder {}
+
+#if canImport(ObjectiveC)
 extension PropertyListEncoder: AnyEncoder {}
+#endif
 
 public extension Encodable {
     /// Encode this value, optionally using a specific encoder.
@@ -68,7 +71,10 @@ public protocol AnyDecoder {
 }
 
 extension JSONDecoder: AnyDecoder {}
+
+#if canImport(ObjectiveC)
 extension PropertyListDecoder: AnyDecoder {}
+#endif
 
 public extension Data {
     /// Decode this data into a value, optionally using a specific decoder.
