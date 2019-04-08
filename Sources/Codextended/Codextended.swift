@@ -146,3 +146,48 @@ private struct AnyCodingKey: CodingKey {
         self.stringValue = String(intValue)
     }
 }
+
+// MARK: - Transformable
+
+/// The Transformable typealias which is the protocol composition of `EncodeTransformable` and `DecodeTransformable`
+public typealias Transformable = EncodeTransformable & DecodeTransformable
+
+// MARK: - EncodeTransformable
+
+/// The EncodeTransformable acting as a value-converter to
+/// transform a given SourceType to an Encodable TargetType
+public protocol EncodeTransformable {
+    
+    /// The EncodeSourceType
+    associatedtype EncodeSourceType
+    
+    /// The EncodeTargetType which must be conform to Encodable
+    associatedtype EncodeTargetType: Encodable
+    
+    /// Transform the SourceType value to the Encodable TargetType
+    ///
+    /// - Parameter value: The EncodeSourceType value
+    /// - Returns: The transformed Encodable TargetType
+    func transformToEncodable(value: EncodeSourceType) -> EncodeTargetType
+    
+}
+
+// MARK: - DecodeTransformable
+
+/// The DecodeTranformable acting as a value-converter to
+/// transform a given DecodeSourceType to an DecodeTargetType
+public protocol DecodeTransformable {
+    
+    /// The DecodeSourceType which mus be conform to Decodable
+    associatedtype DecodeSourceType: Decodable
+    
+    /// The DecodeTargetType
+    associatedtype DecodeTargetType
+    
+    /// Transform the decodable SourceType value to the TargetType
+    ///
+    /// - Parameter decodedValue: The decodable value
+    /// - Returns: The transformed Decode TargetType
+    func transformFromDecodable(value: DecodeSourceType) -> DecodeTargetType
+    
+}
