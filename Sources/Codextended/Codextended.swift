@@ -47,17 +47,27 @@ public extension Encoder {
         try container.encode(value, forKey: key)
     }
 
-    /// Encode a date for a given key (specified as a string), using a specific formatter.
-    /// To encode a date without using a specific formatter, simply encode it like any other value.
-    func encode(_ date: Date, for key: String, using formatter: DateFormatter) throws {
-        try encode(date, for: AnyCodingKey(key), using: formatter)
+    /// Encode a value for a given key (specified as a string), using a concrete EncodeTransformable.
+    ///
+    /// - Parameters:
+    ///   - value: The value
+    ///   - key: The key as a string
+    ///   - transformable: The concrete EncodeTransformable
+    /// - Throws: If encoding fails
+    func encode<T: EncodeTransformable>(_ value: T.EncodeSourceType, for key: String, using transformable: T) throws {
+        try encode(value, for: AnyCodingKey(key), using: transformable)
     }
-
-    /// Encode a date for a given key (specified using a `CodingKey`), using a specific formatter.
-    /// To encode a date without using a specific formatter, simply encode it like any other value.
-    func encode<K: CodingKey>(_ date: Date, for key: K, using formatter: DateFormatter) throws {
-        let string = formatter.string(from: date)
-        try encode(string, for: key)
+    
+    /// Encode a value for a given key (specified using a `CodingKey`), using a concrete EncodeTransformable
+    ///
+    /// - Parameters:
+    ///   - value: The value
+    ///   - key: The CodingKey
+    ///   - transformable: The concrete EncodeTransformable
+    /// - Throws: If encoding fails
+    func encode<K: CodingKey, T: EncodeTransformable>(_ value: T.EncodeSourceType, for key: K, using transformable: T) throws {
+        let encodableValue = transformable.transformToEncodable(value: value)
+        try encode(encodableValue, for: key)
     }
 }
 
