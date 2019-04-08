@@ -17,7 +17,7 @@ public protocol AnyEncoder {
 
 extension JSONEncoder: AnyEncoder {}
 
-#if canImport(ObjectiveC)
+#if canImport(ObjectiveC) || swift(>=5.1)
 extension PropertyListEncoder: AnyEncoder {}
 #endif
 
@@ -72,7 +72,7 @@ public protocol AnyDecoder {
 
 extension JSONDecoder: AnyDecoder {}
 
-#if canImport(ObjectiveC)
+#if canImport(ObjectiveC) || swift(>=5.1)
 extension PropertyListDecoder: AnyDecoder {}
 #endif
 
