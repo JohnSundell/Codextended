@@ -113,29 +113,28 @@ public extension Decoder {
         return try container.decode(type, forKey: key)
     }
 
-    /// Decode a date from a string for a given key (specified as a string), using a
-    /// specific formatter. To decode a date using the decoder's default settings,
-    /// simply decode it like any other value instead of using this method.
-    func decode(_ key: String, using formatter: DateFormatter) throws -> Date {
-        return try decode(AnyCodingKey(key), using: formatter)
+    /// Decode a value for a given key specified as a string), using a concrete DecodeTransformable
+    ///
+    /// - Parameters:
+    ///   - key: The key as a string
+    ///   - transformable: The concrete DecodeTransformable
+    /// - Returns: The DecodeTransformable TargetType value
+    /// - Throws: If decoding fails
+    func decode<T: DecodeTransformable>(_ key: String, using transformable: T) throws -> T.DecodeTargetType {
+        return try decode(AnyCodingKey(key), using: transformable)
     }
-
-    /// Decode a date from a string for a given key (specified as a `CodingKey`), using
-    /// a specific formatter. To decode a date using the decoder's default settings,
-    /// simply decode it like any other value instead of using this method.
-    func decode<K: CodingKey>(_ key: K, using formatter: DateFormatter) throws -> Date {
+    
+    /// Decode a value for a given key specified as a `CodingKey`), using a concrete DecodeTransformable
+    ///
+    /// - Parameters:
+    ///   - key: The CodingKey
+    ///   - transformable: The concrete DecodeTransformable
+    /// - Returns: The DecodeTransformable TargetType value
+    /// - Throws: If decoding fails
+    func decode<K: CodingKey, T: DecodeTransformable>(_ key: K, using transformable: T) throws -> T.DecodeTargetType {
         let container = try self.container(keyedBy: K.self)
-        let rawString = try container.decode(String.self, forKey: key)
-
-        guard let date = formatter.date(from: rawString) else {
-            throw DecodingError.dataCorruptedError(
-                forKey: key,
-                in: container,
-                debugDescription: "Unable to format date string"
-            )
-        }
-
-        return date
+        let decodedValue = try container.decode(T.DecodeSourceType.self, forKey: key)
+        return transformable.transformFromDecodable(value: decodedValue)
     }
 }
 

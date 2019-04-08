@@ -109,7 +109,7 @@ final class CodextendedTests: XCTestCase {
 
             init(from decoder: Decoder) throws {
                 let formatter = Value.makeDateFormatter()
-                date = try decoder.decode("key", using: formatter)
+                date = try decoder.decode("key", using: formatter) ?? .init()
             }
 
             func encode(to encoder: Encoder) throws {
@@ -127,27 +127,6 @@ final class CodextendedTests: XCTestCase {
                        formatter.string(from: valueB.date))
     }
 
-    func testDecodingErrorThrownForInvalidDateString() {
-        struct Value: Decodable {
-            let date: Date
-
-            init(date: Date) {
-                self.date = date
-            }
-
-            init(from decoder: Decoder) throws {
-                date = try decoder.decode("key", using: DateFormatter())
-            }
-        }
-
-        let data = Data(#"{"key": "notADate"}"#.utf8)
-
-        XCTAssertThrowsError(try data.decoded() as Value) { error in
-            XCTAssertTrue(error is DecodingError,
-                          "Expected DecodingError but got \(type(of: error))")
-        }
-    }
-
     func testAllTestsRunOnLinux() {
         verifyAllTestsRunOnLinux()
     }
@@ -159,7 +138,6 @@ extension CodextendedTests: LinuxTestable {
         ("testSingleValue", testSingleValue),
         ("testUsingStringAsKey", testUsingStringAsKey),
         ("testUsingCodingKey", testUsingCodingKey),
-        ("testDateWithCustomFormatter", testDateWithCustomFormatter),
-        ("testDecodingErrorThrownForInvalidDateString", testDecodingErrorThrownForInvalidDateString)
+        ("testDateWithCustomFormatter", testDateWithCustomFormatter)
     ]
 }
