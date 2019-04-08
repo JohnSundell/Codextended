@@ -191,3 +191,17 @@ public protocol DecodeTransformable {
     func transformFromDecodable(value: DecodeSourceType) -> DecodeTargetType
     
 }
+
+// MARK: - DateFormatter+Transformable
+
+extension DateFormatter: Transformable {
+    
+    public func transformToEncodable(value: Date) -> String {
+        return self.string(from: value)
+    }
+    
+    public func transformFromDecodable(value: String) -> Date? {
+        return self.date(from: value)
+    }
+    
+}
