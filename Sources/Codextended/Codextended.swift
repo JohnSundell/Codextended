@@ -66,7 +66,7 @@ public extension Encoder {
     ///   - transformable: The concrete EncodeTransformable
     /// - Throws: If encoding fails
     func encode<K: CodingKey, T: EncodeTransformable>(_ value: T.EncodeSourceType, for key: K, using transformable: T) throws {
-        let encodableValue = transformable.transformToEncodable(value: value)
+        let encodableValue = try transformable.transformToEncodable(value: value)
         try encode(encodableValue, for: key)
     }
 }
@@ -134,7 +134,7 @@ public extension Decoder {
     func decode<K: CodingKey, T: DecodeTransformable>(_ key: K, using transformable: T) throws -> T.DecodeTargetType {
         let container = try self.container(keyedBy: K.self)
         let decodedValue = try container.decode(T.DecodeSourceType.self, forKey: key)
-        return transformable.transformFromDecodable(value: decodedValue)
+        return try transformable.transformFromDecodable(value: decodedValue)
     }
 }
 
@@ -177,7 +177,8 @@ public protocol EncodeTransformable {
     ///
     /// - Parameter value: The EncodeSourceType value
     /// - Returns: The transformed Encodable TargetType
-    func transformToEncodable(value: EncodeSourceType) -> EncodeTargetType
+    /// - Throws: If transforming fails
+    func transformToEncodable(value: EncodeSourceType) throws -> EncodeTargetType
     
 }
 
@@ -197,7 +198,8 @@ public protocol DecodeTransformable {
     ///
     /// - Parameter decodedValue: The decodable value
     /// - Returns: The transformed Decode TargetType
-    func transformFromDecodable(value: DecodeSourceType) -> DecodeTargetType
+    /// - Throws: If transforming fails
+    func transformFromDecodable(value: DecodeSourceType) throws -> DecodeTargetType
     
 }
 
@@ -205,11 +207,11 @@ public protocol DecodeTransformable {
 
 extension DateFormatter: Transformable {
     
-    public func transformToEncodable(value: Date) -> String {
+    public func transformToEncodable(value: Date) throws -> String {
         return self.string(from: value)
     }
     
-    public func transformFromDecodable(value: String) -> Date? {
+    public func transformFromDecodable(value: String) throws -> Date? {
         return self.date(from: value)
     }
     
