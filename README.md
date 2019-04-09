@@ -179,9 +179,9 @@ All it does is give `Codable` a *helping hand* when some form of customization i
 
 ## Installation
 
-Since **Codexteded** is implemented within a single file, the easiest way to use it is to simply drag and drop it into your Xcode project.
+Since **Codextended** is implemented within a single file, the easiest way to use it is to simply drag and drop it into your Xcode project.
 
-But if you wish to use a dependency manager, you can either use the [Swift Package Manager](https://github.com/apple/swift-package-manager) by declaring **Codexteded** as a dependency in your `Package.swift` file:
+But if you wish to use a dependency manager, you can either use the [Swift Package Manager](https://github.com/apple/swift-package-manager) by declaring **Codextended** as a dependency in your `Package.swift` file:
 
 ```swift
 .package(url: "https://github.com/JohnSundell/Codextended", from: "0.1.0")
