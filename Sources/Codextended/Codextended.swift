@@ -97,7 +97,7 @@ public extension Decoder {
         return try decode(AnyCodingKey(key), as: type)
     }
 
-    /// Deceode a value for a given key, specified as a `CodingKey`.
+    /// Decode a value for a given key, specified as a `CodingKey`.
     func decode<T: Decodable, K: CodingKey>(_ key: K, as type: T.Type = T.self) throws -> T {
         let container = try self.container(keyedBy: K.self)
         return try container.decode(type, forKey: key)
