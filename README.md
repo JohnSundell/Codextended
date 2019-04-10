@@ -25,7 +25,7 @@ That’s what **Codextended** aims to fix.
 
 ## Examples
 
-Here’s a few examples that demonstrates the difference between using “vanilla” `Codable` and the APIs that **Codextended** adds to it. The goal is to turn all common serialization operations into one-liners, rather than having to set up a ton of boilerplate.
+Here are a few examples that demonstrate the difference between using “vanilla” `Codable` and the APIs that **Codextended** adds to it. The goal is to turn all common serialization operations into one-liners, rather than having to set up a ton of boilerplate.
 
 ### 🏢 Top-level API
 
