@@ -140,7 +140,7 @@ public protocol AnyDateFormatter {
 
 extension DateFormatter: AnyDateFormatter {}
 
-@available(iOS 10.0, OSX 10.12, tvOS 10.0, *)
+@available(iOS 10.0, macOS 10.12, tvOS 10.0, *)
 extension ISO8601DateFormatter: AnyDateFormatter {}
 
 // MARK: - Private supporting types

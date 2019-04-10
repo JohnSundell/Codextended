@@ -127,7 +127,7 @@ final class CodextendedTests: XCTestCase {
                        formatter.string(from: valueB.date))
     }
 
-    @available(iOS 10.0, OSX 10.12, tvOS 10.0, *)
+    @available(iOS 10.0, macOS 10.12, tvOS 10.0, *)
     func testDateWithISO8601Formatter() throws {
         struct Value: Codable, Equatable {
             let date: Date
