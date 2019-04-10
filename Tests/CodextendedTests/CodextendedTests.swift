@@ -127,6 +127,35 @@ final class CodextendedTests: XCTestCase {
                        formatter.string(from: valueB.date))
     }
 
+    @available(iOS 10.0, macOS 10.12, tvOS 10.0, *)
+    func testDateWithISO8601Formatter() throws {
+        struct Value: Codable, Equatable {
+            let date: Date
+
+            init(date: Date) {
+                self.date = date
+            }
+
+            init(from decoder: Decoder) throws {
+                let formatter = ISO8601DateFormatter()
+                date = try decoder.decode("key", using: formatter)
+            }
+
+            func encode(to encoder: Encoder) throws {
+                let formatter = ISO8601DateFormatter()
+                try encoder.encode(date, for: "key", using: formatter)
+            }
+        }
+
+        let valueA = Value(date: Date())
+        let data = try valueA.encoded()
+        let valueB = try data.decoded() as Value
+        let formatter = ISO8601DateFormatter()
+
+        XCTAssertEqual(formatter.string(from: valueA.date),
+                       formatter.string(from: valueB.date))
+    }
+
     func testDecodingErrorThrownForInvalidDateString() {
         struct Value: Decodable {
             let date: Date
@@ -149,7 +178,7 @@ final class CodextendedTests: XCTestCase {
     }
 
     func testAllTestsRunOnLinux() {
-        verifyAllTestsRunOnLinux()
+        verifyAllTestsRunOnLinux(excluding: ["testDateWithISO8601Formatter"])
     }
 }
 
