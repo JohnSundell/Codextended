@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
     spec.name = "Codextended"
-    spec.version = "0.1.0"
+    spec.version = "0.2.0"
     spec.summary = "Extensions giving Swift's Codable API type inference super powers."
     spec.description = "Codextended adds a set of extensions on top of Swift's Codable API to give it type inference super powers."
     spec.homepage = "https://github.com/JohnSundell/Codextended"
