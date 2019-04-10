@@ -11,12 +11,16 @@ protocol LinuxTestable: XCTestCase {
 }
 
 extension LinuxTestable {
-    func verifyAllTestsRunOnLinux() {
+    func verifyAllTestsRunOnLinux(excluding excludedTestNames: Set<String>) {
         #if os(macOS)
         let testNames = Set(Self.allTests.map { $0.0 })
 
         for name in Self.testNames {
             guard name != "testAllTestsRunOnLinux" else {
+                continue
+            }
+
+            guard !excludedTestNames.contains(name) else {
                 continue
             }
 

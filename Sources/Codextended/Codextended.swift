@@ -49,13 +49,13 @@ public extension Encoder {
 
     /// Encode a date for a given key (specified as a string), using a specific formatter.
     /// To encode a date without using a specific formatter, simply encode it like any other value.
-    func encode(_ date: Date, for key: String, using formatter: DateFormatter) throws {
+    func encode<F: AnyDateFormatter>(_ date: Date, for key: String, using formatter: F) throws {
         try encode(date, for: AnyCodingKey(key), using: formatter)
     }
 
     /// Encode a date for a given key (specified using a `CodingKey`), using a specific formatter.
     /// To encode a date without using a specific formatter, simply encode it like any other value.
-    func encode<K: CodingKey>(_ date: Date, for key: K, using formatter: DateFormatter) throws {
+    func encode<K: CodingKey, F: AnyDateFormatter>(_ date: Date, for key: K, using formatter: F) throws {
         let string = formatter.string(from: date)
         try encode(string, for: key)
     }
@@ -106,14 +106,14 @@ public extension Decoder {
     /// Decode a date from a string for a given key (specified as a string), using a
     /// specific formatter. To decode a date using the decoder's default settings,
     /// simply decode it like any other value instead of using this method.
-    func decode(_ key: String, using formatter: DateFormatter) throws -> Date {
+    func decode<F: AnyDateFormatter>(_ key: String, using formatter: F) throws -> Date {
         return try decode(AnyCodingKey(key), using: formatter)
     }
 
     /// Decode a date from a string for a given key (specified as a `CodingKey`), using
     /// a specific formatter. To decode a date using the decoder's default settings,
     /// simply decode it like any other value instead of using this method.
-    func decode<K: CodingKey>(_ key: K, using formatter: DateFormatter) throws -> Date {
+    func decode<K: CodingKey, F: AnyDateFormatter>(_ key: K, using formatter: F) throws -> Date {
         let container = try self.container(keyedBy: K.self)
         let rawString = try container.decode(String.self, forKey: key)
 
@@ -128,6 +128,22 @@ public extension Decoder {
         return date
     }
 }
+
+// MARK: - Date formatters
+
+/// Protocol acting as a common API for all types of date formatters,
+/// such as `DateFormatter` and `ISO8601DateFormatter`.
+public protocol AnyDateFormatter {
+    func date(from string: String) -> Date?
+    func string(from date: Date) -> String
+}
+
+extension DateFormatter: AnyDateFormatter {}
+
+@available(iOS 10.0, OSX 10.12, tvOS 10.0, *)
+extension ISO8601DateFormatter: AnyDateFormatter {}
+
+// MARK: - Private supporting types
 
 private struct AnyCodingKey: CodingKey {
     var stringValue: String
