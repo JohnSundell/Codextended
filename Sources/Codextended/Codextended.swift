@@ -134,7 +134,9 @@ public extension Decoder {
 /// Protocol acting as a common API for all types of date formatters,
 /// such as `DateFormatter` and `ISO8601DateFormatter`.
 public protocol AnyDateFormatter {
+    /// Format a string into a date
     func date(from string: String) -> Date?
+    /// Format a date into a string
     func string(from date: Date) -> String
 }
 
