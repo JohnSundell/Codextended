@@ -176,6 +176,39 @@ final class CodextendedTests: XCTestCase {
                           "Expected DecodingError but got \(type(of: error))")
         }
     }
+    
+    func testDecodeArraySafely() throws {
+        struct NilFound: Error {}
+        struct Value: Decodable, Equatable {
+            let numbers: [Int]
+
+            init(numbers: [Int]) {
+                self.numbers = numbers
+            }
+
+            init(from decoder: Decoder) throws {
+                self.numbers = try decoder.decodeArraySafely("numbers")
+            }
+        }
+ 
+        do {
+            let data = #"{ "numbers": [ 1, 2, 3, 4 ] }"#.data(using: .utf8)!
+            let value = try data.decoded() as Value
+            XCTAssertEqual(
+                value,
+                Value(numbers: [1, 2, 3, 4])
+            )
+        }
+        
+        do {
+            let data = #"{ "numbers": [ 1, 2, "3", 4 ] }"#.data(using: .utf8)!
+            let value = try data.decoded() as Value
+            XCTAssertEqual(
+                value,
+                Value(numbers: [1, 2, 4])
+            )
+        }
+    }
 
     func testAllTestsRunOnLinux() {
         verifyAllTestsRunOnLinux(excluding: ["testDateWithISO8601Formatter"])
@@ -189,6 +222,7 @@ extension CodextendedTests: LinuxTestable {
         ("testUsingStringAsKey", testUsingStringAsKey),
         ("testUsingCodingKey", testUsingCodingKey),
         ("testDateWithCustomFormatter", testDateWithCustomFormatter),
-        ("testDecodingErrorThrownForInvalidDateString", testDecodingErrorThrownForInvalidDateString)
+        ("testDecodingErrorThrownForInvalidDateString", testDecodingErrorThrownForInvalidDateString),
+        ("testDecodeArraySafely", testDecodeArraySafely)
     ]
 }

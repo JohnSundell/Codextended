@@ -129,6 +129,22 @@ public extension Decoder {
     }
 }
 
+// MARK: - Decoding Array
+
+public extension Decoder {
+    /// Decode an array ignoring elements that fail to decode.
+    func decodeArraySafely<T: Decodable>(_ key: String, as type: T.Type = T.self) throws -> [T] {
+        return try decodeArraySafely(AnyCodingKey(key), as: type)
+    }
+    
+    /// Decode an array ignoring elements that fail to decode.
+    func decodeArraySafely<T: Decodable, K: CodingKey>(_ key: K, as type: T.Type = T.self) throws -> [T] {
+        let container = try self.container(keyedBy: K.self)
+        let decodedArray = try container.decode([IgnoreFailureDecodable<T>].self, forKey: key)
+        return decodedArray.compactMap({ $0.element })
+    }
+}
+
 // MARK: - Date formatters
 
 /// Protocol acting as a common API for all types of date formatters,
@@ -162,5 +178,14 @@ private struct AnyCodingKey: CodingKey {
     init?(intValue: Int) {
         self.intValue = intValue
         self.stringValue = String(intValue)
+    }
+}
+
+private struct IgnoreFailureDecodable<T: Decodable>: Decodable {
+    let element: T?
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        self.element = try? container.decode(T.self)
     }
 }
