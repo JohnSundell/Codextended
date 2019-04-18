@@ -103,6 +103,19 @@ public extension Decoder {
         return try container.decode(type, forKey: key)
     }
 
+    /// Decode an optional value for a given key, specified as a string. Throws an error if the
+    /// specified key exists but is not able to be decoded as the inferred type.
+    func decodeIfPresent<T: Decodable>(_ key: String, as type: T.Type = T.self) throws -> T? {
+        return try decodeIfPresent(AnyCodingKey(key), as: type)
+    }
+
+    /// Decode an optional value for a given key, specified as a `CodingKey`. Throws an error if the
+    /// specified key exists but is not able to be decoded as the inferred type.
+    func decodeIfPresent<T: Decodable, K: CodingKey>(_ key: K, as type: T.Type = T.self) throws -> T? {
+        let container = try self.container(keyedBy: K.self)
+        return try container.decodeIfPresent(type, forKey: key)
+    }
+
     /// Decode a date from a string for a given key (specified as a string), using a
     /// specific formatter. To decode a date using the decoder's default settings,
     /// simply decode it like any other value instead of using this method.

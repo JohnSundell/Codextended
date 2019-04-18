@@ -19,6 +19,41 @@ final class CodextendedTests: XCTestCase {
         XCTAssertEqual(valueA, valueB)
     }
 
+    func testDecodeIfPresent() throws {
+        struct Value: Decodable, Equatable {
+            let stringA: String?
+            let stringB: String?
+
+            init(from decoder: Decoder) throws {
+                stringA = try decoder.decodeIfPresent("stringA")
+                stringB = try decoder.decodeIfPresent("stringB")
+            }
+        }
+
+        let value = try Data(#"{"stringA": "stringA"}"#.utf8).decoded() as Value
+        XCTAssertEqual(value.stringA, "stringA")
+        XCTAssertNil(value.stringB)
+    }
+
+    func testDecodeIfPresentTypeMismatch() throws {
+        struct Value: Decodable, Equatable {
+            let string: String?
+
+            init(from decoder: Decoder) throws {
+                string = try decoder.decodeIfPresent("string")
+            }
+        }
+
+        do {
+            let _ = try Data(#"{"string": 123}"#.utf8).decoded() as Value
+            XCTFail("Decoding expected to fail due to type mismatch.")
+        } catch DecodingError.typeMismatch {
+            return
+        } catch {
+            XCTFail("Expected `typeMismatch` error.")
+        }
+    }
+
     func testSingleValue() throws {
         struct Value: Codable, Equatable {
             let string: String
@@ -185,6 +220,8 @@ final class CodextendedTests: XCTestCase {
 extension CodextendedTests: LinuxTestable {
     static var allTests = [
         ("testEncodingAndDecoding", testEncodingAndDecoding),
+        ("testDecodeIfPresent", testDecodeIfPresent),
+        ("testDecodeIfPresentTypeMismatch", testDecodeIfPresentTypeMismatch),
         ("testSingleValue", testSingleValue),
         ("testUsingStringAsKey", testUsingStringAsKey),
         ("testUsingCodingKey", testUsingCodingKey),
