@@ -69,17 +69,20 @@ struct Article: Codable {
     enum CodingKeys: CodingKey {
         case title
         case body
+        case footnotes
         case tags
     }
 
     var title: String
     var body: String
+    var footnotes: String?
     var tags: [String]
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         title = try container.decode(String.self, forKey: .title)
         body = try container.decode(String.self, forKey: .body)
+        footnotes = try container.decodeIfPresent(String.self, forKey: .footnotes)
         tags = (try? container.decode([String].self, forKey: .tags)) ?? []
     }
 }
@@ -91,11 +94,15 @@ struct Article: Codable {
 struct Article: Codable {
     var title: String
     var body: String
+    var footnotes: String?
     var tags: [String]
 
     init(from decoder: Decoder) throws {
         title = try decoder.decode("title")
         body = try decoder.decode("body")
+        footnotes = try decoder.decodeIfPresent("footnotes")
+        // Or if you prefer to ignore type errors for optional properties, you can use:
+        // footnotes = try? decoder.decode("footnotes")
         tags = (try? decoder.decode("tags")) ?? []
     }
 }
