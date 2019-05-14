@@ -101,8 +101,6 @@ struct Article: Codable {
         title = try decoder.decode("title")
         body = try decoder.decode("body")
         footnotes = try decoder.decodeIfPresent("footnotes")
-        // Or if you prefer to ignore type errors for optional properties, you can use:
-        // footnotes = try? decoder.decode("footnotes")
         tags = (try? decoder.decode("tags")) ?? []
     }
 }
