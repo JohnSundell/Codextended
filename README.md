@@ -197,7 +197,7 @@ But if you wish to use a dependency manager, you can either use the [Swift Packa
 You can also use [CocoaPods](https://cocoapods.org) by adding the following line to your `Podfile`:
 
 ```ruby
-pod "Codextended"
+pod 'Codextended'
 ```
 
 ## Contributions & support
