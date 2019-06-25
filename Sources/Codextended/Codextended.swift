@@ -111,7 +111,6 @@ public extension Decoder {
         guard !keys.isEmpty else {
             throw CodextendedDecodingError.emptyCodingKey
         }
-        assert(!keys.isEmpty, "Can't decode with empty keys")
 
         let keys = keys.map({AnyCodingKey($0.stringValue)})
 
