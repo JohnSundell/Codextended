@@ -212,6 +212,58 @@ final class CodextendedTests: XCTestCase {
         }
     }
 
+    func testDecodingNested() throws {
+        struct Value: Decodable, Equatable {
+            let string: String
+
+            init(from decoder: Decoder) throws {
+                string = try decoder.decode(["a","b","c"])
+            }
+        }
+
+        let jsonString = #"""
+        {
+            "a": {
+                "b": {
+                    "c": "hello world"
+                }
+            }
+        }
+        """#
+
+        let value = try Data(jsonString.utf8).decoded() as Value
+        XCTAssertEqual(value.string, "hello world")
+    }
+
+    func testDecodingSingleValueNested() throws {
+        struct Value: Decodable, Equatable {
+            let string: String
+
+            init(from decoder: Decoder) throws {
+                string = try decoder.decode(["a"])
+            }
+        }
+
+        let value = try Data(#"{"a": "hello world"}"#.utf8).decoded() as Value
+        XCTAssertEqual(value.string, "hello world")
+    }
+
+    func testDecodingNestedWithEmptyKeysThrows() {
+        struct Value: Decodable, Equatable {
+            let string: String
+
+            init(from decoder: Decoder) throws {
+                string = try decoder.decode([String]())
+            }
+        }
+
+        let data = Data(#"{"a": "hello world"}"#.utf8)
+        XCTAssertThrowsError(try data.decoded() as Value) { error in
+                        XCTAssertEqual(error as? CodextendedDecodingError, CodextendedDecodingError.emptyCodingKey,
+                          "Expected CodextendedDecodingError.emptyCodingKey but got \(error)")
+        }
+    }
+
     func testAllTestsRunOnLinux() {
         verifyAllTestsRunOnLinux(excluding: ["testDateWithISO8601Formatter"])
     }
@@ -226,6 +278,9 @@ extension CodextendedTests: LinuxTestable {
         ("testUsingStringAsKey", testUsingStringAsKey),
         ("testUsingCodingKey", testUsingCodingKey),
         ("testDateWithCustomFormatter", testDateWithCustomFormatter),
-        ("testDecodingErrorThrownForInvalidDateString", testDecodingErrorThrownForInvalidDateString)
+        ("testDecodingErrorThrownForInvalidDateString", testDecodingErrorThrownForInvalidDateString),
+        ("testDecodingNested", testDecodingNested),
+        ("testDecodingSingleValueNested", testDecodingSingleValueNested),
+        ("testDecodingNestedWithEmptyKeysThrows", testDecodingNestedWithEmptyKeysThrows)
     ]
 }

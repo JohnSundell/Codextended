@@ -103,6 +103,31 @@ public extension Decoder {
         return try container.decode(type, forKey: key)
     }
 
+    /// Decode a nested value for array of keys, specified as a `CodingKey`.
+    /// Throws an error if keys array is empty
+    func decode<T: Decodable>(_ keys: [CodingKey], as type: T.Type = T.self) throws -> T {
+
+        // Throw an error here?
+        guard !keys.isEmpty else {
+            throw CodextendedDecodingError.emptyCodingKey
+        }
+
+        let keys = keys.map({AnyCodingKey($0.stringValue)})
+
+        var container = try self.container(keyedBy: AnyCodingKey.self)
+        for key in keys.dropLast() {
+            container = try container.nestedContainer(keyedBy: AnyCodingKey.self, forKey: key)
+        }
+        return try container.decode(type, forKey: keys.last!)
+    }
+
+    /// Decode a nested value for array of keys, specified as a string.
+    /// Throws an error if keys array is empty
+    func decode<T: Decodable>(_ keys: [String], as type: T.Type = T.self) throws -> T {
+        return try decode(keys.map({AnyCodingKey($0)}))
+    }
+
+
     /// Decode an optional value for a given key, specified as a string. Throws an error if the
     /// specified key exists but is not able to be decoded as the inferred type.
     func decodeIfPresent<T: Decodable>(_ key: String, as type: T.Type = T.self) throws -> T? {
@@ -139,6 +164,19 @@ public extension Decoder {
         }
 
         return date
+    }
+}
+
+// MARK: - Errors
+
+public enum CodextendedDecodingError: Error, LocalizedError {
+    case emptyCodingKey
+
+    public var errorDescription: String? {
+        switch self {
+        case .emptyCodingKey:
+            return "Coding keys array was empty"
+        }
     }
 }
 
