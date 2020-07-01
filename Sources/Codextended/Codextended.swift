@@ -85,6 +85,13 @@ public extension Data {
     }
 }
 
+public extension KeyedDecodingContainer {
+    func decodeWrapper<T>(key: K, defaultValue: T) throws -> T
+        where T : Decodable {
+        return try decodeIfPresent(T.self, forKey: key) ?? defaultValue
+    }
+}
+
 public extension Decoder {
     /// Decode a singular value from the underlying data.
     func decodeSingleValue<T: Decodable>(as type: T.Type = T.self) throws -> T {
@@ -97,12 +104,23 @@ public extension Decoder {
         return try decode(AnyCodingKey(key), as: type)
     }
 
+    /// Decode a value for a given key, specified as a string with default value.
+    func decode<T: Decodable>(_ key: String, as type: T.Type = T.self, defaultValue: T) throws -> T {
+        return try decode(AnyCodingKey(key), as: type, defaultValue: defaultValue)
+    }
+    
     /// Decode a value for a given key, specified as a `CodingKey`.
     func decode<T: Decodable, K: CodingKey>(_ key: K, as type: T.Type = T.self) throws -> T {
         let container = try self.container(keyedBy: K.self)
         return try container.decode(type, forKey: key)
     }
 
+    /// Decode a value for a given key, specified as a `CodingKey` with a default value.
+    func decode<T: Decodable, K: CodingKey>(_ key: K, as type: T.Type = T.self, defaultValue: T) throws -> T {
+        let container = try self.container(keyedBy: K.self)
+        return try container.decodeWrapper(key: key, defaultValue: defaultValue)
+    }
+    
     /// Decode an optional value for a given key, specified as a string. Throws an error if the
     /// specified key exists but is not able to be decoded as the inferred type.
     func decodeIfPresent<T: Decodable>(_ key: String, as type: T.Type = T.self) throws -> T? {
