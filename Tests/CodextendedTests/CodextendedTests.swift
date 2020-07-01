@@ -54,6 +54,56 @@ final class CodextendedTests: XCTestCase {
         }
     }
 
+    func testDecodeUsingStringAsKeyWithDefaultValueOptional() {
+        struct Value: Codable {
+            var string: String?
+            
+            init(string: String) {
+                self.string = string
+            }
+            
+            init(from decoder: Decoder) throws {
+                string = try decoder.decode("key", defaultValue: self.string)
+            }
+            
+            func encode(to encoder: Encoder) throws {
+                try encoder.encode(string, for: "key")
+            }
+        }
+        
+        let empty = "{}".data(using: .utf8)!
+        XCTAssertNoThrow(try empty.decoded() as Value)
+        let dataChangedKey = "{\"changedKey\":\"Hello, world!\"}".data(using: .utf8)!
+        XCTAssertNoThrow(try dataChangedKey.decoded() as Value)
+        let dataNull = "{\"string\":null}".data(using: .utf8)!
+        XCTAssertNoThrow(try dataNull.decoded() as Value)
+    }
+    
+    func testDecodeUsingStringAsKeyWithDefaultValue() {
+        struct Value: Codable {
+            var string: String = "Hello, world!"
+            
+            init(string: String) {
+                self.string = string
+            }
+            
+            init(from decoder: Decoder) throws {
+                string = try decoder.decode("key", defaultValue: self.string)
+            }
+            
+            func encode(to encoder: Encoder) throws {
+                try encoder.encode(string, for: "key")
+            }
+        }
+        
+        let empty = "{}".data(using: .utf8)!
+        XCTAssertNoThrow(try empty.decoded() as Value)
+        let dataChangedKey = "{\"changedKey\":\"Hello, world!\"}".data(using: .utf8)!
+        XCTAssertNoThrow(try dataChangedKey.decoded() as Value)
+        let dataNull = "{\"string\":null}".data(using: .utf8)!
+        XCTAssertNoThrow(try dataNull.decoded() as Value)
+    }
+    
     func testSingleValue() throws {
         struct Value: Codable, Equatable {
             let string: String
@@ -99,7 +149,7 @@ final class CodextendedTests: XCTestCase {
         let valueB = try data.decoded() as Value
         XCTAssertEqual(valueA, valueB)
     }
-
+    
     func testUsingCodingKey() throws {
         struct Value: Codable, Equatable {
             enum CodingKeys: CodingKey {
