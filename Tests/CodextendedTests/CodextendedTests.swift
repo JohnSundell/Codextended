@@ -272,8 +272,8 @@ extension CodextendedTests: LinuxTestable {
         ("testEncodingAndDecoding", testEncodingAndDecoding),
         ("testDecodeIfPresent", testDecodeIfPresent),
         ("testDecodeIfPresentTypeMismatch", testDecodeIfPresentTypeMismatch),
-        ("testDecodeUsingStringAsKeyWithDefaultValueOptional",testDecodeUsingStringAsKeyWithDefaultValueOptional)
-        ("testDecodeUsingStringAsKeyWithDefaultValue",testDecodeUsingStringAsKeyWithDefaultValue)
+        ("testDecodeUsingStringAsKeyWithDefaultValueOptional",testDecodeUsingStringAsKeyWithDefaultValueOptional),
+        ("testDecodeUsingStringAsKeyWithDefaultValue",testDecodeUsingStringAsKeyWithDefaultValue),
         ("testSingleValue", testSingleValue),
         ("testUsingStringAsKey", testUsingStringAsKey),
         ("testUsingCodingKey", testUsingCodingKey),
