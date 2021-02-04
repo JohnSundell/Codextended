@@ -81,7 +81,7 @@ public extension Data {
     /// If no explicit encoder is passed, then the data is decoded as JSON.
     func decoded<T: Decodable>(as type: T.Type = T.self,
                                using decoder: AnyDecoder = JSONDecoder()) throws -> T {
-        return try decoder.decode(T.self, from: self)
+        return try decoder.decode(type, from: self)
     }
 }
 
