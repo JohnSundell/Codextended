@@ -147,6 +147,10 @@ public extension Decoder {
 /// Protocol acting as a common API for all types of date formatters,
 /// such as `DateFormatter` and `ISO8601DateFormatter`.
 public protocol AnyDateFormatter {
+    /// The time zone for the date
+    var timeZone: TimeZone! { get set }
+    /// The format string that represents the structure of the date
+    var dateFormat: String! { get }
     /// Format a string into a date
     func date(from string: String) -> Date?
     /// Format a date into a string
@@ -156,7 +160,11 @@ public protocol AnyDateFormatter {
 extension DateFormatter: AnyDateFormatter {}
 
 @available(iOS 10.0, macOS 10.12, tvOS 10.0, *)
-extension ISO8601DateFormatter: AnyDateFormatter {}
+extension ISO8601DateFormatter: AnyDateFormatter {
+    public var dateFormat: String! {
+        return "ISO 8601"
+    }
+}
 
 // MARK: - Private supporting types
 
